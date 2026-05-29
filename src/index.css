@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+@import "@fontsource/onest/index.css";
+@import "@fontsource/geist-mono/index.css";
+
+@theme {
+  --font-sans: 'Onest', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'Geist Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Roboto Mono, Menlo, Monaco, Consolas, monospace;
+  
+  --color-page-bg: var(--color-page-bg);
+  --color-card-bg: var(--color-card-bg);
+  --color-border-default: var(--color-border-default);
+  --color-text-heading: var(--color-text-heading);
+  --color-text-body: var(--color-text-body);
+  --color-btn-primary-bg: var(--color-btn-primary-bg);
+  --color-btn-primary-text: var(--color-btn-primary-text);
+  --color-btn-primary-hover: var(--color-btn-primary-hover);
+}
+
+:root {
+  --color-page-bg: #F7F7F5;
+  --color-card-bg: #FFFFFF;
+  --color-border-default: rgba(0, 0, 0, 0.08);
+  --color-text-heading: #111111;
+  --color-text-body: #6B7280;
+  
+  --color-btn-primary-bg: #111111;
+  --color-btn-primary-text: #FFFFFF;
+  --color-btn-primary-hover: #27272A;
+}
+
+.dark {
+  --color-page-bg: #0A0A0B;
+  --color-card-bg: #141416;
+  --color-border-default: rgba(255, 255, 255, 0.10);
+  --color-text-heading: #FAFAFA;
+  --color-text-body: #9CA3AF;
+  
+  --color-btn-primary-bg: #FFFFFF;
+  --color-btn-primary-text: #000000;
+  --color-btn-primary-hover: #E4E4E7;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-page-bg);
+  color: var(--color-text-body);
+  font-family: var(--font-sans);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.bg-grid {
+  background-image: radial-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 0);
+  background-size: 24px 24px;
+}
+.dark .bg-grid {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 0);
+}
