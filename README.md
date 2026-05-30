@@ -1,16 +1,176 @@
-# React + Vite
+# YTM Universal — Музыкальный загрузчик
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Локальный инструмент для скачивания музыки с YouTube в формате MP3 с обложками и тегами.  
+Работает через веб-интерфейс в браузере, устанавливается на своём компьютере.
 
-Currently, two official plugins are available:
+> **Личный проект.** Создан для личного использования. Форки приветствуются, но активная поддержка не подразумевается.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## Что умеет
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Искать и скачивать **отдельные треки** по исполнителю и названию
+- Искать и скачивать **альбомы и плейлисты** — по поисковому запросу или прямой ссылке на YouTube
+- Показывать **реальный прогресс-бар** во время скачивания (с возможностью отменить)
+- Сохранять файлы в **любую папку** на компьютере — указывается прямо в интерфейсе
+- Встраивать в MP3 **обложку и теги** (исполнитель, название)
+- Работать полностью **офлайн и локально** — никаких облачных сервисов, всё остаётся у вас
 
-## Expanding the ESLint configuration
+Интерфейс поддерживает русский и английский язык, тёмную и светлую тему.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## Как это работает (кратко)
+
+```
+Браузер (веб-интерфейс)
+        │
+        ▼
+Локальный Flask-сервер (Python)
+        │
+        ▼
+yt-dlp + ffmpeg  →  MP3 на диск
+```
+
+Программа состоит из двух частей:
+- **Бэкенд** — Python-скрипт, который запускается на вашем компьютере и делает всю работу: ищет видео, скачивает аудио, конвертирует в MP3.
+- **Фронтенд** — красивый веб-интерфейс в браузере, через который вы управляете всем этим.
+
+---
+
+## Требования
+
+- **Windows** (разработано и протестировано на Windows 11)
+- **Python 3.10+** — [python.org](https://www.python.org/downloads/)
+- **Node.js 18+** — [nodejs.org](https://nodejs.org/)
+- **ffmpeg** — программа для конвертации аудио. Проще всего поставить через spotDL: `pip install spotdl && spotdl --download-ffmpeg`
+- **Файл cookies** с YouTube (`www.youtube.com_cookies.txt`) — нужен, чтобы yt-dlp мог получить аудио. Экспортируется из браузера расширением [Get cookies.txt LOCALLY](https://chromewebstore.google.com/detail/get-cookiestxt-locally/cclelndahbckbenkjhflpdbgdldlbecc). Файл должен лежать в папке `backend/`.
+
+---
+
+## Установка и запуск
+
+### Один раз — установка зависимостей
+
+Откройте PowerShell в папке проекта и выполните:
+
+```powershell
+# Зависимости фронтенда
+npm install
+
+# Зависимости бэкенда
+pip install flask flask-cors yt-dlp
+```
+
+> Если PowerShell выдаёт ошибку про `npm`, выполните сначала:
+> ```powershell
+> Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+> ```
+
+### Запуск
+
+**Самый простой способ — двойной клик на `start_ytm.bat`.**  
+Батник запустит бэкенд и фронтенд, откроет браузер. Готово.
+
+Чтобы остановить — двойной клик на `stop_ytm.bat`.
+
+---
+
+### Ручной запуск (если батник не подходит)
+
+```powershell
+# Терминал 1 — сборка и запуск фронтенда
+npm run build
+npm run preview -- --port 4173 --strictPort
+# → http://localhost:4173
+
+# Терминал 2 — запуск бэкенда
+cd backend
+python server.py
+# → http://localhost:5000
+```
+
+---
+
+## Настройка под себя
+
+В верхней части `backend/server.py` есть три переменные, которые нужно проверить:
+
+```python
+OUTPUT_DIR = "./Downloads"          # куда сохранять файлы по умолчанию
+FFMPEG     = "~/.spotdl/ffmpeg.exe" # путь к ffmpeg (подставьте свой)
+COOKIES    = "..."                  # автоматически берётся из папки backend/
+```
+
+Также папку для сохранения можно менять прямо в интерфейсе — поле в нижней части страницы.
+
+---
+
+## Структура проекта
+
+```
+YTM Tool/
+├─ src/
+│  ├─ App.jsx          — весь фронтенд: поиск, скачивание, UI
+│  └─ index.css        — стили (Tailwind v4, темы, шрифты)
+├─ backend/
+│  ├─ server.py        — Flask-бэкенд, yt-dlp, API
+│  └─ www.youtube.com_cookies.txt  ← положить сюда
+├─ start_ytm.bat       — запуск всего одним кликом
+├─ stop_ytm.bat        — остановка и освобождение портов
+├─ vite.config.js
+└─ package.json
+```
+
+---
+
+## Хочу доработать под себя — с чего начать?
+
+Проект намеренно устроен так, чтобы его было легко адаптировать — в том числе с помощью AI-ассистентов.
+
+### `YTM_Universal_HANDOFF.md` — полный контекст проекта
+
+Этот файл — самодостаточный документ с полным описанием архитектуры, контрактом API, исходником бэкенда и списком решённых проблем. Его можно скормить любой нейросети целиком и получить AI, который понимает весь проект с нуля.
+
+Что внутри:
+- Полная архитектура и стек
+- Контракт API (все эндпоинты с примерами JSON)
+- Полный исходный код `server.py` с комментариями
+- Список уже решённых багов и ловушек
+- Рекомендуемые следующие шаги
+
+**Сценарий использования:** хотите добавить новый эндпоинт или изменить логику скачивания — откройте этот файл, загрузите в Claude / GPT / Gemini и попросите помочь.
+
+### `Frontend - handoff.md` — передаточный документ для фронтенда
+
+Аналогичный документ для работы с React-частью. Содержит дизайн-систему, правила оформления, описание всех стейтов и хендлеров, контракт API с точки зрения фронтенда и список известных ловушек.
+
+Что внутри:
+- Дизайн-система (строгий монохром, типографика, темы)
+- Полное описание `App.jsx`: стейт, функции, хендлеры
+- API-контракт (что и как отправляет фронт, что получает в ответ)
+- Решённые проблемы (форм-сабмит, HMR, relative paths и др.)
+- Чеклист реализованных фич и идеи для следующих шагов
+
+**Сценарий использования:** хотите изменить внешний вид, добавить новую вкладку или переработать UX — загрузите этот файл в отдельный чат с AI и работайте с фронтендом изолированно.
+
+---
+
+## Стек
+
+| Слой | Технология |
+|---|---|
+| Фронтенд | Vite + React + Tailwind CSS v4 |
+| Иконки | lucide-react |
+| Шрифты | Onest (текст) + Geist Mono (лейблы) |
+| Бэкенд | Python 3 + Flask + flask-cors |
+| Скачивание | yt-dlp + ffmpeg |
+| Связь | HTTP/JSON + Server-Sent Events (SSE) |
+
+---
+
+## Известные ограничения
+
+- Большие плейлисты (30+ треков) не тестировались — поведение неизвестно.
+- Требуется актуальный файл cookies с YouTube; без него yt-dlp не получает аудио.
+- Только Windows. На macOS/Linux запустить теоретически можно, но bat-файлы и пути под это не адаптированы.
