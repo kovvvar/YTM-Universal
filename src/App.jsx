@@ -1168,7 +1168,7 @@ export default function App() {
             <ul className="space-y-3 font-normal text-text-body/80">
               <li className="flex items-center gap-1.5">
                 <Github size={11} className="stroke-current" />
-                <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="hover:text-text-heading transition-colors">{t("footer_github")}</a>
+                <a href="https://github.com/kovvvar/YTM-Universal" target="_blank" rel="noopener noreferrer" className="hover:text-text-heading transition-colors">{t("footer_github")}</a>
               </li>
               <li><a href="https://yt-dlp.org" target="_blank" rel="noopener noreferrer" className="hover:text-text-heading transition-colors">{t("footer_ytdlp")}</a></li>
               <li><a href="https://flask.palletsprojects.com" target="_blank" rel="noopener noreferrer" className="hover:text-text-heading transition-colors">{t("footer_flask")}</a></li>
